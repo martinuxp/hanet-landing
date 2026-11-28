@@ -12,42 +12,69 @@ import {
 } from '../data/content';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const auds: Aud[] = ['liceos', 'est'];
+const auds: Aud[] = ['inst', 'est'];
 const screens = TOUR.map(t => t.key) as Screen[];
 const releases = changelog.releases.slice(0, 5);
 const current = releases[0]?.version ?? '';
 const short = (v: string) => v.replace(/-beta$/, '');
 const fmtDate = (d: string) => new Date(`${d}T12:00:00`).toLocaleDateString('es-CL', { day: 'numeric', month: 'short' }).replace('.', '');
-const description = 'HaNet es la app de los liceos chilenos: horario, Calendar del curso, clases, notas, eventos y alianzas en un mismo lugar. Para estudiantes, docentes y equipos directivos.';
+const description = 'HaNet es la app de las instituciones educativas chilenas: horario, Calendar del curso, clases, notas, eventos y alianzas en un mismo lugar. Para estudiantes, docentes y equipos directivos.';
 const logo = 'M5.02344 40.8102V2.18981V0L15.3522 9.55556V19.5093L20.5166 20.1065V13.338L34.0234 14.5324V16.7222V26.2778V28.4676L20.5166 29.662V22.8935L15.3522 23.4907V33.4444L5.02344 43V40.8102Z';
 const arrow = 'M7 17L17 7M9 7h8v8';
 ---
 <!doctype html>
-<html lang="es" data-view="liceos">
+<html lang="es" data-view="inst">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HaNet · Todo tu liceo, en una sola app</title>
+  <title>HaNet · Toda tu institución, en una sola app</title>
   <meta name="description" content={description} />
   <meta name="theme-color" content="#282829" />
   <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
   <link rel="canonical" href={SITE_URL} />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="es_CL" />
-  <meta property="og:title" content="HaNet · Todo tu liceo, en una sola app" />
+  <meta property="og:title" content="HaNet · Toda tu institución, en una sola app" />
   <meta property="og:description" content={description} />
   <meta property="og:url" content={SITE_URL} />
   <meta property="og:image" content={new URL(`${base}/og.png`, Astro.site).href} />
   <meta name="twitter:card" content="summary_large_image" />
   <script is:inline>
-    // La vista para estudiantes se abre con #estudiantes; se decide antes de pintar.
-    document.documentElement.classList.add('js');
-    if (location.hash === '#estudiantes') document.documentElement.dataset.view = 'est';
+    // La vista se decide antes de pintar: #estudiantes manda; si no, la que la
+    // persona eligió la primera vez (guardada en este navegador). Sin elección
+    // todavía, la página pregunta (clase "asking").
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('js');
+      var saved = null;
+      try { saved = localStorage.getItem('hanet.landing.perfil'); } catch (e) { /* sin almacenamiento */ }
+      if (location.hash === '#estudiantes') root.dataset.view = 'est';
+      else if (saved === 'est' || saved === 'inst') root.dataset.view = saved;
+      else root.classList.add('asking');
+    })();
   </script>
 </head>
 <body>
 <div class="ambient" aria-hidden="true"><span></span><span></span></div>
 <a class="skip" href="#contenido">Ir al contenido</a>
+
+<!-- Primera visita: ¿quién eres? -->
+<dialog class="ask" data-ask tabindex="-1" aria-labelledby="ask-title" aria-describedby="ask-text">
+  <svg class="ask__mark" width="26" height="36" viewBox="4 0 31 43" aria-hidden="true"><path d={logo} fill="#EF2274"></path></svg>
+  <h2 class="ask__title" id="ask-title">¡Hola! ¿Quién eres?</h2>
+  <p class="ask__text" id="ask-text">Te mostramos lo que te sirve. Puedes cambiarlo cuando quieras.</p>
+  <div class="ask__options">
+    <button type="button" class="ask__opt" data-answer="inst">
+      <span class="ask__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V9.5L12 5l7 4.5V21M9.5 21v-5h5v5M9 12h.01M15 12h.01"></path></svg></span>
+      <span class="ask__label"><span class="ask__name">Soy de la administración</span><span class="ask__sub">Quiero HaNet para mi institución</span></span>
+    </button>
+    <button type="button" class="ask__opt" data-answer="est">
+      <span class="ask__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 9L12 4.5 21.5 9 12 13.5z"></path><path d="M6.5 11v4.5c1.5 1.5 3.4 2.2 5.5 2.2s4-.7 5.5-2.2V11M21.5 9v5.5"></path></svg></span>
+      <span class="ask__label"><span class="ask__name">Soy estudiante</span><span class="ask__sub">Quiero entrar a HaNet</span></span>
+    </button>
+  </div>
+  <button type="button" class="ask__skip" data-answer="skip">Solo estoy mirando</button>
+</dialog>
 
 <header class="wrap top">
   <a href="#inicio" class="brand" aria-label="HaNet, inicio">
@@ -69,7 +96,7 @@ const arrow = 'M7 17L17 7M9 7h8v8';
 <!-- Hero -->
 <section id="inicio" class="wrap hero">
   <div class="seg" role="group" aria-label="Elige tu vista">
-    {AUDS.map(a => <button type="button" class="seg__btn" data-pick={a.id} aria-pressed={a.id === 'liceos' ? 'true' : 'false'}>{a.name}</button>)}
+    {AUDS.map(a => <button type="button" class="seg__btn" data-pick={a.id} aria-pressed={a.id === 'inst' ? 'true' : 'false'}>{a.name}</button>)}
   </div>
   <HeroTitle client:load titles={TITLES} />
   {auds.map(a => (
@@ -180,22 +207,22 @@ const arrow = 'M7 17L17 7M9 7h8v8';
   </div>
 </section>
 <div class="wrap carousel-hint" aria-hidden="true"><span>Desliza para explorar</span><div class="dots dots--m">{TOUR.map((_, i) => <span data-mdot={i}></span>)}</div></div>
-<p class="wrap fine" data-aud="liceos">Próximamente: Notebook, el libro de clases digital, después de la beta.</p>
+<p class="wrap fine" data-aud="inst">Próximamente: Notebook, el libro de clases digital, después de la beta.</p>
 
 <!-- Raspar una nota -->
 <section class="wrap section scratch-section">
   <div class="scratch-section__text">
     <p class="kicker"><span class="kicker__n">03</span>Notas</p>
-    <h2 class="h2" data-aud="liceos">Así reciben sus notas tus estudiantes.</h2>
+    <h2 class="h2" data-aud="inst">Así reciben sus notas tus estudiantes.</h2>
     <h2 class="h2" data-aud="est">Tu nota llega tapada. Ráspala.</h2>
-    <p class="lead" data-aud="liceos">Cada nota llega tapada y se destapa en pantalla completa, con el dedo. Pruébalo aquí mismo.</p>
+    <p class="lead" data-aud="inst">Cada nota llega tapada y se destapa en pantalla completa, con el dedo. Pruébalo aquí mismo.</p>
     <p class="lead" data-aud="est">Cuando tu docente publica una nota, te llega un aviso que nunca la muestra. La destapas tú, con el dedo. Pruébalo aquí mismo.</p>
   </div>
   <ScratchCard client:visible subject="Lenguaje y Literatura" title="Ensayo argumentativo" date="16 de noviembre" grade="6,7" />
 </section>
 
-<!-- Para cada rol (vista liceos) -->
-<section class="wrap section" data-aud="liceos">
+<!-- Para cada rol (vista inst) -->
+<section class="wrap section" data-aud="inst">
   <p class="kicker"><span class="kicker__n">04</span>Roles</p>
   <h2 class="h2">Cada rol ve lo suyo.</h2>
   <div class="seg seg--scroll" role="tablist" aria-label="Roles">
@@ -220,7 +247,7 @@ const arrow = 'M7 17L17 7M9 7h8v8';
   {auds.map(a => (
     <div class="card start" data-aud={a}>
       <svg class="start__mark" viewBox="4 0 31 43" aria-hidden="true"><path d={logo} fill="#EF2274"></path></svg>
-      <p class="kicker"><span class="kicker__n">{a === 'liceos' ? '05' : '04'}</span>{a === 'liceos' ? 'Cómo empezar' : 'Crear cuenta'}</p>
+      <p class="kicker"><span class="kicker__n">{a === 'inst' ? '05' : '04'}</span>{a === 'inst' ? 'Cómo empezar' : 'Crear cuenta'}</p>
       <h2 class="h2">{PASOS[a].title}</h2>
       <p class="lead">{PASOS[a].text}</p>
       <ol class="steps" data-steps>
@@ -240,7 +267,7 @@ const arrow = 'M7 17L17 7M9 7h8v8';
 <!-- Contribuir y novedades -->
 <section id="novedades" class="wrap section news">
   <div class="news__text">
-    <p class="kicker"><span class="kicker__n" data-aud="liceos">06</span><span class="kicker__n" data-aud="est">05</span>Open source</p>
+    <p class="kicker"><span class="kicker__n" data-aud="inst">06</span><span class="kicker__n" data-aud="est">05</span>Open source</p>
     <h2 class="h2">Contribuye al proyecto HaNet.</h2>
     <p class="lead">¿Tienes ideas, quejas o encontraste algún error? ¡Avísanos!<br />Entre todos hacemos de HaNet la mejor herramienta open source para la educación. Contribuye en GitHub o por correo.</p>
     <div class="chips">
@@ -263,10 +290,10 @@ const arrow = 'M7 17L17 7M9 7h8v8';
 
 <!-- Para instituciones -->
 <section id="instituciones" class="wrap section">
-  <div class="card card--pink cta" data-aud="liceos">
+  <div class="card card--pink cta" data-aud="inst">
     <div class="cta__main">
-      <h2 class="h2">¿Quieres HaNet en tu liceo?</h2>
-      <p class="cta__text">Haz que tu liceo sea parte de HaNet beta por un precio reducido, con todos los módulos incluidos. Escríbenos a este correo.</p>
+      <h2 class="h2">¿Quieres HaNet en tu institución?</h2>
+      <p class="cta__text">Haz que tu institución sea parte de HaNet beta por un precio reducido, con todos los módulos incluidos. Escríbenos a este correo.</p>
       <div class="mail">
         <a class="mail__addr" href={`mailto:${EMAIL}`}>{EMAIL}</a>
         <button type="button" class="mail__copy" data-copy={EMAIL} data-done="Correo copiado">Copiar correo</button>
@@ -280,15 +307,15 @@ const arrow = 'M7 17L17 7M9 7h8v8';
   </div>
   <div class="card card--pink cta" data-aud="est">
     <div class="cta__main">
-      <h2 class="h2">¿Tu liceo todavía no usa HaNet?</h2>
-      <p class="cta__text">¡Pídelo! Muéstrale esta página a tu profe jefe, al CEE o a la dirección. Cuando tu liceo se sume, entras con su código.</p>
+      <h2 class="h2">¿Tu institución todavía no usa HaNet?</h2>
+      <p class="cta__text">¡Pídelo! Muéstrale esta página a tu profe jefe, al CEE o a la dirección. Cuando tu institución se sume, entras con su código.</p>
       <div class="actions">
         <button type="button" class="btn btn--dark" data-copy={SITE_URL} data-done="Link copiado">Copiar el link</button>
-        <button type="button" class="btn btn--line-dark" data-pick="liceos" data-top>Ver la página para liceos</button>
+        <button type="button" class="btn btn--line-dark" data-pick="inst" data-top>Ver la página para instituciones</button>
       </div>
     </div>
     <ul class="cta__list">
-      <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5.5c0 4.4-3 8-7 9.5-4-1.5-7-5.1-7-9.5V6z"></path></svg>Sin chats ni seguidores: HaNet es solo para tu liceo.</li>
+      <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5.5c0 4.4-3 8-7 9.5-4-1.5-7-5.1-7-9.5V6z"></path></svg>Sin chats ni seguidores: HaNet es solo para tu institución.</li>
       <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"></rect><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"></path></svg>Protege tus notas con Face ID o tu huella, si quieres.</li>
       <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.5a14 14 0 0 1 18 0M6.5 13a9 9 0 0 1 11 0M10 16.5a4 4 0 0 1 4 0"></path><circle cx="12" cy="20" r="0.8" fill="currentColor"></circle></svg>Tu horario y tu Calendar se abren aunque no tengas internet.</li>
     </ul>
@@ -305,12 +332,13 @@ const arrow = 'M7 17L17 7M9 7h8v8';
   </div>
   <nav class="foot__nav" aria-label="Pie de página">
     <a href={APP_URL}>Abrir HaNet</a>
-    <a href={PANEL_URL}>Panel para liceos</a>
+    <a href={PANEL_URL}>Panel para instituciones</a>
     <a href={DOCS_URL}>Documentación</a>
     <a href="#novedades">Novedades</a>
     <a href={STATUS_URL}>Estado de HaNet</a>
     <a href={TERMS_URL}>Términos y privacidad</a>
     <a href={GITHUB_URL}>GitHub</a>
+    <button type="button" class="foot__link" data-ask-open>Cambiar de perfil</button>
   </nav>
 </footer>
 

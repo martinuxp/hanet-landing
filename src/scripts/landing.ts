@@ -1,13 +1,23 @@
-// Interacción del landing: vista liceos/estudiantes, título que se enciende,
+// Interacción del landing: vista inst/estudiantes, título que se enciende,
 // el día que avanza, recorrido con el teléfono fijo, roles, pasos y copiar.
 const root = document.documentElement;
 root.classList.add('js');
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-type View = 'liceos' | 'est';
+type View = 'inst' | 'est';
 
 // ---------- Vistas ----------
+// La elección se recuerda en este navegador: la primera visita pregunta y
+// el switch del hero (o "Cambiar de perfil" del pie) la cambia después.
+const PERFIL_KEY = 'hanet.landing.perfil';
+function remember(view: View) {
+  try { localStorage.setItem(PERFIL_KEY, view); } catch { /* sin almacenamiento */ }
+}
+function remembered(): string | null {
+  try { return localStorage.getItem(PERFIL_KEY); } catch { return null; }
+}
 function setView(view: View, opts: { top?: boolean } = {}) {
   root.dataset.view = view;
+  remember(view);
   document.querySelectorAll<HTMLButtonElement>('.hero .seg__btn').forEach(b => {
     b.setAttribute('aria-pressed', String(b.dataset.pick === view));
   });
@@ -29,6 +39,44 @@ window.addEventListener('hashchange', () => {
 document.querySelectorAll<HTMLButtonElement>('.hero .seg__btn').forEach(b => {
   b.setAttribute('aria-pressed', String(b.dataset.pick === root.dataset.view));
 });
+
+// ---------- Primera visita: ¿quién eres? ----------
+const ask = document.querySelector<HTMLDialogElement>('[data-ask]');
+function closeAsk() {
+  if (!ask?.open) return;
+  const done = () => { ask.close(); ask.classList.remove('is-closing'); };
+  if (reduce) done();
+  else { ask.classList.add('is-closing'); window.setTimeout(done, 140); }
+}
+function openAsk() {
+  if (!ask || ask.open || typeof ask.showModal !== 'function') return false;
+  ask.showModal();
+  // El foco va a la tarjeta, no a una opción, para que ninguna parezca elegida.
+  ask.focus();
+  return true;
+}
+if (ask) {
+  ask.addEventListener('close', () => {
+    root.classList.remove('asking');
+    // Si se cerró sin elegir (Esc), queda la vista que ya estaba y no se vuelve a preguntar.
+    if (!remembered()) remember(root.dataset.view as View);
+    window.dispatchEvent(new Event('hanet:asked'));
+  });
+  ask.querySelectorAll<HTMLButtonElement>('[data-answer]').forEach(b => {
+    b.addEventListener('click', () => {
+      const a = b.dataset.answer;
+      if (a === 'est' || a === 'inst') {
+        if (root.dataset.view !== a) setView(a, { top: true });
+        else remember(a);
+      } else remember(root.dataset.view as View);
+      closeAsk();
+    });
+  });
+  // Tocar fuera de la tarjeta también cierra, como "Solo estoy mirando".
+  ask.addEventListener('click', e => { if (e.target === ask) closeAsk(); });
+  document.querySelectorAll<HTMLButtonElement>('[data-ask-open]').forEach(b => b.addEventListener('click', () => openAsk()));
+  if (root.classList.contains('asking') && !openAsk()) root.classList.remove('asking');
+}
 
 // ---------- El día que avanza ----------
 const rows = document.querySelector<HTMLElement>('[data-rows]');

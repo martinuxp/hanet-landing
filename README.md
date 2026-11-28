@@ -8,7 +8,7 @@ npm run dev      # http://localhost:4321
 npm run build    # sitio estático en dist/
 ```
 
-- Textos: `src/data/content.ts` (vista para liceos y vista para estudiantes, `#estudiantes`).
+- Textos: `src/data/content.ts` (vista para instituciones y vista para estudiantes, `#estudiantes`).
 - Página: `src/pages/index.astro`; estilos en `src/styles/landing.css`; interacción en `src/scripts/landing.ts`.
 - Capturas del teléfono: `public/screens/` (la app web con datos de ejemplo, sin personas reales).
 - Novedades: `npm run build` trae las últimas versiones de `constants/changelog.json` de hanetcl (`scripts/sync-changelog.mjs`); sin red, usa la copia de `src/data/changelog.json`.
