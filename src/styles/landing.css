@@ -45,9 +45,9 @@ section[id], main [id] { scroll-margin-top: 24px; }
 .skip { position: absolute; left: 16px; top: -60px; z-index: 10; padding: 10px 16px; border-radius: 999px; background: var(--text); color: var(--bg); font-weight: 700; text-decoration: none; }
 .skip:focus { top: 16px; }
 
-/* Vistas: liceos (predeterminada) y estudiantes. */
-html[data-view='liceos'] [data-aud='est'],
-html[data-view='est'] [data-aud='liceos'] { display: none !important; }
+/* Vistas: inst (predeterminada) y estudiantes. */
+html[data-view='inst'] [data-aud='est'],
+html[data-view='est'] [data-aud='inst'] { display: none !important; }
 
 .wrap { width: 100%; max-width: 1200px; margin: 0 auto; padding-left: var(--gutter); padding-right: var(--gutter); }
 .section { padding-top: var(--gap); }
@@ -330,6 +330,43 @@ html[data-view='est'] [data-aud='liceos'] { display: none !important; }
 .foot__main .fine { margin-top: 0; font-size: 13px; color: var(--muted); max-width: 520px; }
 .foot__nav { display: flex; flex-wrap: wrap; gap: 8px 24px; }
 .foot__nav a { font-size: 15px; color: var(--text-2); text-decoration: none; padding: 10px 0; }
+.foot__link { font: inherit; font-size: 15px; color: var(--text-2); background: none; border: 0; padding: 10px 0; cursor: pointer; }
+.foot__link:hover { color: var(--pink-soft); }
+
+/* Primera visita: ¿quién eres? */
+.ask {
+  width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 32px 24px 16px;
+  border: 1px solid var(--line); border-radius: 32px; background: var(--bg); color: var(--text);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.55); text-align: center; overflow: auto;
+}
+.ask:focus { outline: none; }
+.ask::backdrop { background: rgba(20, 20, 21, 0.62); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.ask[open] { animation: ask-in 200ms cubic-bezier(.2, .8, .2, 1); }
+.ask[open]::backdrop { animation: ask-fade 200ms ease; }
+.ask.is-closing { animation: ask-out 140ms ease forwards; }
+.ask.is-closing::backdrop { animation: ask-fade 140ms ease reverse forwards; }
+@keyframes ask-in { from { opacity: 0; transform: translateY(12px) scale(0.97); } }
+@keyframes ask-out { to { opacity: 0; transform: translateY(8px) scale(0.98); } }
+@keyframes ask-fade { from { opacity: 0; } }
+.ask__mark { display: block; margin: 0 auto 16px; }
+.ask__title { font-family: var(--display); font-size: clamp(30px, 8vw, 38px); line-height: 1.05; font-weight: 750; letter-spacing: -0.035em; }
+.ask__text { margin: 10px auto 0; max-width: 320px; font-size: 16px; color: var(--text-3); }
+.ask__options { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+.ask__opt {
+  display: flex; align-items: center; gap: 14px; width: 100%; min-height: 72px; padding: 10px 22px 10px 10px;
+  border: 0; border-radius: 999px; background: var(--surface); color: var(--text); font: inherit; text-align: left; cursor: pointer;
+  transition: background-color 150ms ease, transform 150ms ease;
+}
+.ask__opt:hover { background: var(--surface-2); }
+.ask__opt:active { transform: scale(0.98); }
+.ask__icon { flex-shrink: 0; width: 52px; height: 52px; border-radius: 999px; background: rgba(239, 34, 116, 0.18); color: var(--pink-soft); display: inline-flex; align-items: center; justify-content: center; }
+.ask__opt:hover .ask__icon { background: var(--pink); color: var(--text); }
+.ask__label { display: flex; flex-direction: column; min-width: 0; }
+.ask__name { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+.ask__sub { font-size: 14px; color: var(--muted); }
+.ask__skip { margin-top: 8px; padding: 12px 20px; border: 0; border-radius: 999px; background: none; color: var(--muted); font: inherit; font-size: 15px; cursor: pointer; }
+.ask__skip:hover { color: var(--text); }
+html.asking { overflow: hidden; }
 
 /* ---------- Chicha ---------- */
 
