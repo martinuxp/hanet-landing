@@ -17,7 +17,7 @@ export const AUDS: { id: Aud; name: string }[] = [
 
 export const TITLES: Record<Aud, string> = {
   inst: 'Toda tu institución, en una sola app.',
-  est: 'Tu institución entera, en tu bolsillo.',
+  est: 'Tu liceo entero, en tu bolsillo.',
 };
 
 export const HERO: Record<Aud, { sub: string; main: string; mainHref: string; other: string; otherHref: string }> = {
@@ -26,8 +26,8 @@ export const HERO: Record<Aud, { sub: string; main: string; mainHref: string; ot
     main: 'Llevar HaNet a mi institución', mainHref: '#instituciones', other: 'Abrir HaNet', otherHref: APP_URL,
   },
   est: {
-    sub: 'Tu horario, tus pruebas, tus notas y los eventos de tu institución en un mismo lugar. Sin buscar en diez grupos ni preguntar a última hora.',
-    main: 'Abrir HaNet', mainHref: APP_URL, other: '¿Tu institución no tiene HaNet?', otherHref: '#instituciones',
+    sub: 'Tu horario, tus pruebas, tus notas y los eventos de tu liceo en un mismo lugar. Sin buscar en diez grupos ni preguntar a última hora.',
+    main: 'Abrir HaNet', mainHref: APP_URL, other: '¿Tu liceo no tiene HaNet?', otherHref: '#instituciones',
   },
 };
 
@@ -88,7 +88,7 @@ export type TourStep = {
 
 export const TOUR: TourStep[] = [
   { key: 'calendar', tag: 'Base', name: 'Calendar', sub: 'La agenda del curso',
-    head: { inst: 'Todo lo que una institución necesita y sin costo adicional.', est: 'Toda tu institución, sin buscar en diez grupos.' },
+    head: { inst: 'Todo lo que una institución necesita y sin costo adicional.', est: 'Todo tu liceo, sin buscar en diez grupos.' },
     text: { inst: 'Haz que tus estudiantes no se pierdan ninguna evaluación, actividad o tarea. Cada prueba aparece dentro de su clase, con aviso un día antes.',
       est: 'No te pierdas ninguna prueba, actividad o tarea. Cada evaluación aparece dentro de su clase, con aviso un día antes.' } },
   { key: 'classhall', tag: 'Base', name: 'ClassHall', sub: 'El espacio de cada asignatura',
@@ -96,11 +96,11 @@ export const TOUR: TourStep[] = [
       est: 'Anuncios, material, pautas y tareas de cada asignatura. Entrega tus tareas desde el teléfono y lee los comentarios de tu profe.' } },
   { key: 'eventos', tag: 'Base', name: 'Eventos', sub: 'Lo que pasa en la institución',
     text: { inst: '¿Tienes una actividad en el patio? Publícala en Eventos y haz que tus estudiantes se enteren rápidamente. Con inscripción, entradas y más.',
-      est: '¿Qué pasa hoy en tu institución? Tocatas, ferias y campeonatos, con inscripción en un toque.' } },
+      est: '¿Qué pasa hoy en el liceo? Tocatas, ferias y campeonatos, con inscripción en un toque.' } },
   { key: 'notas', tag: 'Módulo', name: 'Notas',
-    head: { inst: 'Solo lo que tu institución necesita.', est: 'Y mucho más, según tu institución.' },
+    head: { inst: 'Solo lo que tu institución necesita.', est: 'Y mucho más, según tu liceo.' },
     headText: { inst: 'El Ecosistema HaNet tiene mucho más que ofrecerte. Activa más módulos HaNet y disfruta de más funciones en menos aplicaciones extras.',
-      est: 'Cada institución activa los módulos que necesita.' },
+      est: 'Cada liceo activa los módulos que necesita.' },
     text: { inst: 'Mantén a tus estudiantes informados de sus calificaciones y promedios por asignatura desde una sola app.',
       est: 'Raspa la pantalla y destapa tu nota apenas se publica. Mira tu promedio por asignatura cuando quieras.' } },
   { key: 'alianzas', tag: 'Módulo', name: 'Alianzas',
@@ -108,7 +108,7 @@ export const TOUR: TourStep[] = [
       est: 'Sigue a tu alianza en vivo: puntajes, actividades del día y pruebas flash.' } },
   { key: 'feed', tag: 'Módulo', name: 'Feed',
     text: { inst: 'Publicaciones de la institución, el CEE y la directiva de cada curso, con votaciones y notificaciones.',
-      est: 'Avisos de tu institución, del CEE y de tu curso. Vota en las encuestas, siempre de forma anónima.' } },
+      est: 'Avisos del liceo, del CEE y de tu curso. Vota en las encuestas, siempre de forma anónima.' } },
   { key: 'entradas', tag: 'Módulo', name: 'Entradas',
     text: { inst: 'Ofrece y emite entradas a eventos de tu institución desde HaNet y obtén analíticas en vivo de quiénes llegaron y quiénes no.',
       est: 'Tu entrada vive en tu teléfono. Muestra el QR en la puerta y listo.' } },
